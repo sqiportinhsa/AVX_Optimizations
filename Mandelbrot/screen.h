@@ -6,4 +6,4 @@ struct Window {
     SDL_Texture  *tex = nullptr;
 };
 
-void run_mandelbrote(void (*get_picture)(u_int16_t *screen));
+void run_mandelbrote(void (*get_picture)(u_int32_t *counters));

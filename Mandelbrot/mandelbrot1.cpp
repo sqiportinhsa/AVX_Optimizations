@@ -1,7 +1,7 @@
 #include "common.h"
 #include "mandelbrot1.h"
 
-void calc_colors_1(u_int16_t *screen) {
+void calc_colors_1(u_int32_t *counters) {
     for (int screen_y = 0; screen_y < SCREEN_HEIGHT; ++screen_y) {
         for (int screen_x = 0; screen_x < SCREEN_WIDTH; ++screen_x) {
             float x_0 = ((float)screen_x + X_SHIFT) / SCALE;
@@ -24,11 +24,7 @@ void calc_colors_1(u_int16_t *screen) {
                 y = xy_2 + y_0; 
             }
 
-            int pixel_pos = screen_y * SCREEN_WIDTH * BYTES_PER_PIXEL + screen_x * BYTES_PER_PIXEL;
-            
-            screen[pixel_pos + 0] = (i * 256 * 128 / ITERATIONS) % 256;
-            screen[pixel_pos + 1] = (i * 256 * 128 / ITERATIONS) % 256;
-            screen[pixel_pos + 2] = 0;
+            counters[screen_y * SCREEN_WIDTH + screen_x] = i;
         }
     }
 }

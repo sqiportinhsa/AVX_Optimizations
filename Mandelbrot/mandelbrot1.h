@@ -1,6 +1,9 @@
-#pragma once
+#ifndef MANDELBROT1
+#define MANDELBROT1
 
 #include <stdio.h>
 #include <stdlib.h>
 
-void calc_colors_1(u_int16_t *screen);
+void calc_colors_1(u_int32_t *counters);
+
+#endif
