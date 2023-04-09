@@ -3,13 +3,13 @@
 
 static Window *window_init();
 static void end_window(Window *window);
-static void draw_picture(Window *window, u_int16_t *picture);
-static void calc_colors(u_int16_t *screen, u_int32_t *counters);
+static void draw_picture(Window *window, u_int8_t *picture);
+static void calc_colors(u_int8_t *screen, u_int32_t *counters);
 
 void run_mandelbrote(void (*get_pixels)(u_int32_t *counters)) {
     Window *window = window_init();
     u_int32_t *counters = (u_int32_t*) aligned_alloc(32, SCREEN_HEIGHT * SCREEN_WIDTH * sizeof(u_int32_t));
-    u_int16_t *screen   = (u_int16_t*) calloc(SCREEN_HEIGHT * SCREEN_WIDTH * BYTES_PER_PIXEL, sizeof(u_int16_t));
+    u_int8_t *screen    = (u_int8_t*)  calloc(SCREEN_HEIGHT * SCREEN_WIDTH * BYTES_PER_PIXEL, sizeof(u_int16_t));
 
     SDL_Event event;
 
@@ -25,36 +25,19 @@ void run_mandelbrote(void (*get_pixels)(u_int32_t *counters)) {
     free(screen);
 }
 
-static void calc_colors(u_int16_t *screen, u_int32_t *counters) {
+static void calc_colors(u_int8_t *screen, u_int32_t *counters) {
     int size = SCREEN_HEIGHT * SCREEN_WIDTH;
     for (int i = 0; i < size; ++i) {
         int counter       = counters[i];
         int pos_on_screen = i * BYTES_PER_PIXEL;
 
-        // if (counter == ITERATIONS) {
-        //     screen[pos_on_screen + 0] = 0;
-        //     screen[pos_on_screen + 1] = 0;
-        //     screen[pos_on_screen + 2] = 0;
-        // } else {
-        //     screen[pos_on_screen + 0] = 255;
-        //     screen[pos_on_screen + 1] = 255;
-        //     screen[pos_on_screen + 2] = 255;
-        // }
-
         screen[pos_on_screen + 0] = (counter * 256 * 128 / ITERATIONS) % 256;
         screen[pos_on_screen + 1] = (counter * 256 * 128 / ITERATIONS) % 256;
-        screen[pos_on_screen + 2] = 0;
-
-        // screen[pos_on_screen + 0] = 255;
-        // screen[pos_on_screen + 1] = 255;
-        // screen[pos_on_screen + 2] = 255;
-
-
-        //printf("%d %d %d\n", screen[pos_on_screen], screen[pos_on_screen + 1], screen[pos_on_screen + 2]);
+        screen[pos_on_screen + 2] = (counter * 256 * 128 / ITERATIONS) % 256;
     }
 }
 
-static void draw_picture(Window *window, u_int16_t *picture) {
+static void draw_picture(Window *window, u_int8_t *picture) {
 
     int   pitch  = 0;
     void *pixels = nullptr;
