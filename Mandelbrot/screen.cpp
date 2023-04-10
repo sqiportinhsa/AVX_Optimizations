@@ -1,3 +1,4 @@
+#include <time.h>
 #include <unistd.h>
 
 #include "screen.h"
@@ -11,21 +12,31 @@ static void calc_colors(u_int8_t *screen, u_int32_t *counters);
 void run_mandelbrote(void (*get_pixels)(u_int32_t *counters)) {
     Window *window = window_init();
     u_int32_t *counters = (u_int32_t*) aligned_alloc(32, SCREEN_HEIGHT * SCREEN_WIDTH * sizeof(u_int32_t));
-    u_int8_t *screen    = (u_int8_t*)  calloc(SCREEN_HEIGHT * SCREEN_WIDTH * BYTES_PER_PIXEL, sizeof(u_int16_t));
+    u_int8_t  *screen   =  (u_int8_t*) calloc(SCREEN_HEIGHT * SCREEN_WIDTH * BYTES_PER_PIXEL, sizeof(u_int16_t));
 
     SDL_Event event;
+    volatile u_int32_t avoid_loop_skip_optimization = 0;
 
+    clock_t begin = clock();
     for (int i = 0; i < COUNT_TIMES; ++i) {
         get_pixels(counters);
-        calc_colors(screen, counters);
-        draw_picture(window, screen);
-        sleep(10);
+        avoid_loop_skip_optimization = counters[i];
     }
+    clock_t end   = clock();
+
+    long time = end - begin;
+    time = (time * 1000) / (CLOCKS_PER_SEC * COUNT_TIMES); // time in msec 
+
+    calc_colors(screen, counters);
+    draw_picture(window, screen);
+    sleep(10);
 
     end_window(window);
 
     free(counters);
     free(screen);
+
+    printf("average time: %ld msec\n", time);
 }
 
 static void calc_colors(u_int8_t *screen, u_int32_t *counters) {
