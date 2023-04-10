@@ -1,3 +1,5 @@
+#include <unistd.h>
+
 #include "screen.h"
 #include "common.h"
 
@@ -17,6 +19,7 @@ void run_mandelbrote(void (*get_pixels)(u_int32_t *counters)) {
         get_pixels(counters);
         calc_colors(screen, counters);
         draw_picture(window, screen);
+        sleep(10);
     }
 
     end_window(window);

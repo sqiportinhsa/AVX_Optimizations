@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 const int ITERATIONS  = 1000;
-const int COUNT_TIMES = 10;
+const int COUNT_TIMES = 1;
 
 const int SCREEN_WIDTH  = 1024;
 const int SCREEN_HEIGHT = 1024;
