@@ -1,7 +1,7 @@
 #include "mandelbrot2.h"
 #include "common.h"
 
-void calc_colors_2(u_int32_t *screen) {
+void calc_iterations_2(u_int32_t *screen) {
     __m256 arr_shifts = _mm256_set_ps(7 * STEP, 6 * STEP, 5 * STEP, 4 * STEP, 
                                       3 * STEP, 2 * STEP, 1 * STEP, 0 * STEP); 
     __m256 max_r2     = _mm256_set1_ps(MAX_R2);
