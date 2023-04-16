@@ -143,10 +143,8 @@ counters[screen_y * SCREEN_WIDTH + screen_x] = i; // сохранение ном
 
 https://godbolt.org/z/E8P6bcoqb
 
-![m1src](godbolt/m1src.png)
-![m1asm](godbolt/m1asm.png)
-![m2src](godbolt/m2src.png)
-![m2asm](godbolt/m2asm.png)
+![m1](godbolt/m1.png)
+![m2](godbolt/m2.png)
 
 В первом случае `xmm` регистры используются для одного числа, то есть компилятор не векторизует цикл даже в случае `-O3` флага. Во втором же случае целиком используются регистры `ymm` и инструкции к ним, то есть оптимизация действительно срабатывает.
 
