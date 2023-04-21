@@ -77,26 +77,25 @@ static inline __m256i _mm256_mulhi_epi8_own(__m256i a, __m256i b) {
     __m256i high_a = _mm256_shuffle_epi8(a, SPLIT_HIGH_MASK);
     __m256i high_b = _mm256_shuffle_epi8(b, SPLIT_HIGH_MASK);   
 
-    // array: [a1 | a2 | a3 | a4]
+    // a: [a31-a24 | a23-a16 | a15-a8 | a7-a0]
     // 
-    // high:  [-- | a1 | -- | a2]
-    // low:   [-- | a3 | -- | a4]
+    // a_high:  [ a31 0 a30 0 ... 0 a24 0 | a15 0 a14 0 ... 0 a8 0]
+    // a_low:   [ a23 0 a22 0 ... 0 a16 0 | a7  0 a6  0 ... 0 a0 0]
 
     __m256i mul_low  = _mm256_mullo_epi16(low_a,  low_b);
     __m256i mul_high = _mm256_mullo_epi16(high_a, high_b);
 
-    // high: [ (a1 * b1)_hi | (a1 * b1)_lo | (a2 * b2)_hi | (a2 * b2)_lo ]    
-    // low:  [ (a3 * b3)_hi | (a3 * b3)_lo | (a4 * b4)_hi | (a4 * b4)_lo ] 
+    // high: [ (a31 * b31)_hi | (a31 * b31)_lo | (a30 * b30)_hi | (a30 * b30)_lo | ... ]    
+    // low:  [ (a23 * b23)_hi | (a23 * b23)_lo | (a22 * b22)_hi | (a22 * b22)_lo | ... ] 
 
     mul_low  = _mm256_shuffle_epi8(mul_low,  MOVE_LOW_MASK);
     mul_high = _mm256_shuffle_epi8(mul_high, MOVE_HIGH_MASK);
 
-    // high: [ (a1 * b1)_hi | (a2 * b2)_hi |    ----      |     -----    ]
-    // low:  [     ----     |    -----     | (a3 * b3)_hi | (a4 * b4)_hi ]
-
+    // high: [ ab31_hi | ... | ab24_hi |  ----   | ... |   ----  | ab15_hi | ... ]
+    // low:  [  ----   | ... |  ----   | ab23_hi | ... | ab16_hi |  ----   | ... ]
     __m256i res = _mm256_add_epi8(mul_high, mul_low);
 
-    // res: [ (a1 * b1)_hi | (a2 * b2)_hi | (a3 * b3)_hi | (a4 * b4)_hi ]
+    // res: [ ab31_hi - ab0_hi ]
 
     return res;
 }
