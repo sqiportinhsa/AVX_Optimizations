@@ -2,20 +2,24 @@
 #include <unistd.h>
 
 #include "run_calc.h"
+#include "get_bmp.h"
 
 static Window *window_init(int height, int width);
 static void end_window(Window *window);
 static void draw_picture(Window *window, uint32_t *image, int height, int width);
 
-static Time get_time(int count_times, Image *front, Image *back, u_int32_t *dest,
-                   void (*get_pixels)(Image *front, Image *back, uint32_t *dest)) ;
-static void print_time(int count_time, long time, long error);
+static Time get_time(int count_times, Image *front, Image *back, uint32_t *dest,
+                   void (*get_pixels)(Image *front, Image *back, uint32_t *dest, 
+                                    const int xshift, const int yshift));
 
-void run_blending(void (*get_pixels)(Image *front, Image *background, uint32_t *dest), 
-                                     Image *front, Image *back) {
+static void print_time(int count_time, long time, double error);
+
+void run_blending(void (*get_pixels)(Image *front, Image *background, uint32_t *dest, 
+                                                 const int xshift, const int yshift), 
+                                     Image *front, Image *back, const char *output) {
 
     Window *window = window_init(back->height, back->width);
-    uint32_t *dest = (uint32_t*) calloc(back->size, sizeof(uint32_t));
+    uint32_t *dest = (uint32_t*) aligned_alloc(256, back->size * sizeof(uint32_t));
 
     Time time = {};
     for (int i = 0; i < TIMES_SIZE; ++i) {
@@ -24,12 +28,19 @@ void run_blending(void (*get_pixels)(Image *front, Image *background, uint32_t *
         print_time(COUNT_TIMES[i], time.time, time.error);
     }
     sleep(5);
+
+    uint32_t *temp = back->pixels;
+    back->pixels = dest;
+    save(back, output);
+    back->pixels = temp;
+
     end_window(window);
     free(dest);
 }
 
 static Time get_time(int count_times, Image *front, Image *back, uint32_t *dest,
-                   void (*get_pixels)(Image *front, Image *back, uint32_t *dest)) {
+                   void (*get_pixels)(Image *front, Image *back, uint32_t *dest, 
+                                             const int xshift, const int yshift)) {
 
     long times[REPEAT_BENCH] = {};
     volatile u_int32_t avoid_skip_loop_optimization = 0;
@@ -38,13 +49,13 @@ static Time get_time(int count_times, Image *front, Image *back, uint32_t *dest,
     for (int i = 0; i < REPEAT_BENCH; ++i) {
         clock_t begin = clock();
         for (int j = 0; j < count_times; ++j) {
-            get_pixels(front, back, dest);
+            get_pixels(front, back, dest, XSHIFT, YSHIFT);
             avoid_skip_loop_optimization = dest[j];
         }
         clock_t end = clock();
 
         long time = end - begin;
-        time = (time * 1000) / (CLOCKS_PER_SEC); // time in msec 
+        time = (time * 1000000) / (CLOCKS_PER_SEC); // time in usec 
 
         times[i] = time;
     }
@@ -55,19 +66,20 @@ static Time get_time(int count_times, Image *front, Image *back, uint32_t *dest,
     }
     time.time /= REPEAT_BENCH;
     for (int i = 0; i < REPEAT_BENCH; ++i) {
-        times[i] -= time.time;
-        time.error += times[i];
+        long delta = (times[i] - time.time);
+        time.error += delta * delta;
     }
     time.error /= REPEAT_BENCH;
+    time.error = sqrt(time.error);
+
     return time;
 }
 
-static void print_time(int count_time, long time, long error) {
-    printf("%d, %ld, %ld\n", count_time, time, error);
+static void print_time(int count_time, long time, double error) {
+    printf("%d, %ld, %lg\n", count_time, time, error);
 }
 
 static void draw_picture(Window *window, uint32_t *image, int height, int width) {
-
     int   pitch  = 0;
     void *pixels = nullptr;
 

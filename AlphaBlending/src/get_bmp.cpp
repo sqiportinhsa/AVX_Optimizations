@@ -51,7 +51,7 @@ static Image *create_img(unsigned int width, unsigned int height) {
     img->width  = width;
     img->size = width * height;
 
-    img->pixels = (uint32_t*) calloc(width * height, sizeof(uint32_t));
+    img->pixels = (uint32_t*) aligned_alloc(256, width * height * sizeof(uint32_t));
     return img;
 }
 
@@ -65,12 +65,8 @@ void free_image(Image *img) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 int save(Image *img, const char *filename) {
-    int fd = creat (filename, O_RDWR);
-
-    if (fd == -1) {
-        fprintf(stderr, "failed to save file %s with error %s\n", filename, strerror(errno));
-        return -1;
-    }
+    
+    FILE *output = fopen(filename, "wb");
 
     bitmap_file_header fheader = {
         .bitmap = BITMAP,
@@ -89,9 +85,10 @@ int save(Image *img, const char *filename) {
         .image_size = img->size * BYTES_PER_PIXEL,
     };
 
-    write(fd, &fheader, sizeof(bitmap_file_header));
-    write(fd, &iheader, sizeof(bitmap_info_header));
-    write(fd, img->pixels, img->size);
+    fwrite(&fheader, sizeof(bitmap_file_header), 1, output);
+    fwrite(&iheader, sizeof(bitmap_info_header), 1, output);
+    fwrite(img->pixels, img->size, sizeof(uint32_t), output);
+    fclose(output);
 
     return 0;
 }

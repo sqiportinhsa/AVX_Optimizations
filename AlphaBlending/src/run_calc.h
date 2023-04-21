@@ -11,15 +11,19 @@ struct Window {
 };
 
 struct Time {
-    long time  = 0;
-    long error = 0;
+    long   time  = 0;
+    double error = 0;
 };
 
-const int REPEAT_BENCH = 5;
+const int REPEAT_BENCH = 100;
 
-const int COUNT_TIMES[] = {10, 25, 50, 75, 100};
+const int COUNT_TIMES[] = {1, 2, 5, 7, 1};
 const int TIMES_SIZE    = sizeof(COUNT_TIMES) / sizeof(int);
 
-void run_blending(void (*get_pixels)(Image *front, Image *background, uint32_t *dest), 
-                                     Image *front, Image *back);
+const int XSHIFT = 400;
+const int YSHIFT = 0;
+
+void run_blending(void (*get_pixels)(Image *front, Image *background, uint32_t *dest, 
+                                                 const int xshift, const int yshift), 
+                                     Image *front, Image *back, const char *output);
 #endif
