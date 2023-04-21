@@ -8,7 +8,7 @@ DEBUG_FLAGS = -march=native -D _DEBUG -ggdb3 -std=c++2a -O0 -Wall -Wextra -Weffc
 
 FLAGS = $(OPT_FLAGS)
 
-CC=g++
+CC=gcc
 
 all: m1
 
