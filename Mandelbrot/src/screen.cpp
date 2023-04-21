@@ -19,6 +19,10 @@ void run_mandelbrote(void (*get_pixels)(u_int32_t *counters)) {
 
     SDL_Event event;
 
+    get_time(1, counters, get_pixels);
+    calc_colors(screen, counters);
+    draw_picture(window, screen);
+
     Time time = {};
     for (int i = 0; i < TIMES_SIZE; ++i) {
         time = get_time(COUNT_TIMES[i], counters, get_pixels);
@@ -57,10 +61,12 @@ static Time get_time(int count_times, u_int32_t *counters, void (*get_pixels)(u_
     }
     time.time /= REPEAT_BENCH;
     for (int i = 0; i < REPEAT_BENCH; ++i) {
-        times[i] -= time.time;
-        time.error += times[i];
+        long delta = (times[i] - time.time);
+        time.error += delta * delta;
     }
     time.error /= REPEAT_BENCH;
+    time.error = sqrt(time.error);
+
     return time;
 }
 

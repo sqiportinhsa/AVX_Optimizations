@@ -3,6 +3,6 @@
 
 #include <immintrin.h>
 
-void calc_iterations_2(u_int32_t *screen);
+void calc_iterations_vector(u_int32_t *screen);
 
 #endif

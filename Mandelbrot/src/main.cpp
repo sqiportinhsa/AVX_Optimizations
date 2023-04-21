@@ -1,9 +1,15 @@
 #include "common.h"
 #include "screen.h"
-#include "mandelbrot1.h"
-#include "mandelbrot2.h"
+#include "scalar.h"
+#include "vector.h"
 
 int main() {
-    run_mandelbrote(calc_iterations_1);
+    #ifdef M1
+        run_mandelbrote(calc_iterations_scalar);
+    #elif defined(M2)
+        run_mandelbrote(calc_iterations_vector);
+    #else
+        #error 
+    #endif
     return 0;
 }

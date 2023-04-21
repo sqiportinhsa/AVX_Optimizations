@@ -1,7 +1,7 @@
 #include "common.h"
-#include "mandelbrot1.h"
+#include "scalar.h"
 
-void calc_iterations_1(u_int32_t *counters) {
+void calc_iterations_scalar(u_int32_t *counters) {
     for (int screen_y = 0; screen_y < SCREEN_HEIGHT; ++screen_y) {
         for (int screen_x = 0; screen_x < SCREEN_WIDTH; ++screen_x) {
             float x_0 = ((float)screen_x + X_SHIFT) / SCALE;
