@@ -44,7 +44,7 @@ const __m256i  MOVE_HIGH_MASK = _mm256_set_epi8(4*3 + 3, 4*3 + 1, 4*2 + 3, 4*2 +
 const __m256i const255 = _mm256_set1_epi8(255);
 
 
-void blend2(Image *front, Image *background, uint32_t *dest, const int xshift, const int yshift) {
+void vector_blending(Image *front, Image *background, uint32_t *dest, const int xshift, const int yshift) {
     unsigned int front_width  = front->width;
     unsigned int front_height = front->height;
     unsigned int back_width   = background->width;
@@ -54,7 +54,7 @@ void blend2(Image *front, Image *background, uint32_t *dest, const int xshift, c
 
     for (unsigned int y = 0; y < front_height; ++y) {
         for (unsigned int x = 0; x < front_width; x += 8) {
-            __m256i  back_pixels = _mm256_loadu_si256((__m256i*) (back_src + (y+yshift) * back_width  + x + xshift));
+            __m256i  back_pixels = _mm256_loadu_si256((__m256i*)(back_src + (y+yshift) * back_width  + x + xshift));
             __m256i front_pixels = _mm256_loadu_si256((__m256i*)(front_src + y*front_width + x));
 
             __m256i alpha = _mm256_shuffle_epi8(front_pixels, ALPHA_MASK);

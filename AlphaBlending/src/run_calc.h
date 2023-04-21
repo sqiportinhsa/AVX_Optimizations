@@ -17,7 +17,7 @@ struct Time {
 
 const int REPEAT_BENCH = 100;
 
-const int COUNT_TIMES[] = {1, 2, 5, 7, 1};
+const int COUNT_TIMES[] = {100, 250, 500, 750, 1000};
 const int TIMES_SIZE    = sizeof(COUNT_TIMES) / sizeof(int);
 
 const int XSHIFT = 400;

@@ -8,9 +8,9 @@ int main() {
     Image *front = get_image("images/front2.bmp");
 
     #ifdef A1
-        run_blending(blend1, front, back, "images/output.bmp");
+        run_blending(scalar_blending, front, back, "images/output.bmp");
     #elif defined(A2)
-        run_blending(blend2, front, back, "images/output.bmp");
+        run_blending(vector_blending, front, back, "images/output.bmp");
     #else
         #error "Undefined mode"
     #endif

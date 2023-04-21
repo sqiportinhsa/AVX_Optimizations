@@ -100,7 +100,7 @@ static Window *window_init(int height, int width) {
 
     Window *window = (Window*) calloc(1, sizeof(Window));
 
-    window->win = SDL_CreateWindow("Mandelbrote", SDL_WINDOWPOS_UNDEFINED, 
+    window->win = SDL_CreateWindow("Alpha Blending", SDL_WINDOWPOS_UNDEFINED, 
                                     SDL_WINDOWPOS_UNDEFINED, width, height, 
                                     SDL_WINDOW_SHOWN);
     if (window->win == nullptr) {
