@@ -7,8 +7,8 @@ struct Window {
 };
 
 struct Time {
-    long time  = 0;
-    long error = 0;
+    float time  = 0;
+    float error = 0;
 };
 
 void run_mandelbrote(void (*get_picture)(u_int32_t *counters));

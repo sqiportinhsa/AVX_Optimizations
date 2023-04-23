@@ -21,9 +21,6 @@ void calc_iterations_vector(u_int32_t *screen) {
             for (; i < ITERATIONS; ++i) {
                 __m256 x_quadr = _mm256_mul_ps(x, x);                    
                 __m256 y_quadr = _mm256_mul_ps(y, y);                    
-                __m256 xy_2    = _mm256_mul_ps(x, y);
-
-                xy_2 = _mm256_add_ps(xy_2, xy_2);
 
                 __m256 r2  = _mm256_add_ps(x_quadr, y_quadr);
                 __m256 cmp = _mm256_cmp_ps(r2, max_r2, _CMP_LT_OS);
@@ -33,6 +30,9 @@ void calc_iterations_vector(u_int32_t *screen) {
                 if (_mm256_testz_ps(cmp, cmp)) {
                     break;
                 }
+
+                __m256 xy_2    = _mm256_mul_ps(x, y);
+                xy_2 = _mm256_add_ps(xy_2, xy_2);
 
                 x = _mm256_sub_ps(x_quadr, y_quadr);
                 x = _mm256_add_ps(x, x_0);

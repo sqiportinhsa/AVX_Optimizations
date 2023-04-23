@@ -14,12 +14,12 @@ void calc_iterations_scalar(u_int32_t *counters) {
             for (; i < ITERATIONS; ++i) {
                 float x_quadr = x * x;
                 float y_quadr = y * y;
-                float xy_2    = x * y * 2;
 
                 if (x_quadr + y_quadr >= MAX_R2) {
                     break;
                 }
 
+                float xy_2    = x * y * 2;
                 x = x_quadr - y_quadr + x_0;
                 y = xy_2 + y_0; 
             }

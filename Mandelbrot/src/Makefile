@@ -20,10 +20,10 @@ example: example.cpp
 	g++ example.cpp -o example -lSDL2_ttf -lSDL2 
 
 m1: ../obj/scalar.o ../obj/screen.o main.cpp
-	g++ -DM1 ../obj/scalar.o ../obj/screen.o main.cpp -o ../build/m1 -lSDL2_ttf -lSDL2 $(FLAGS)
+	g++ -DM1 ../obj/scalar.o ../obj/screen.o main.cpp -o ../build/m1 -lSDL2 $(FLAGS)
 
 m2: ../obj/vector.o ../obj/screen.o main.cpp
-	g++ -DM2 ../obj/vector.o ../obj/screen.o main.cpp -o ../build/m2 -lSDL2_ttf -lSDL2 $(FLAGS)
+	g++ -DM2 ../obj/vector.o ../obj/screen.o main.cpp -o ../build/m2 -lSDL2 $(FLAGS)
 
 ../obj/scalar.o: scalar.cpp scalar.h common.h
 	g++ -c scalar.cpp -o ../obj/scalar.o  $(FLAGS)

@@ -10,7 +10,7 @@ static void draw_picture(Window *window, u_int8_t *picture);
 static void calc_colors(u_int8_t *screen, u_int32_t *counters);
 
 static Time get_time(int count_times, u_int32_t *counters, void (*get_pixels)(u_int32_t *counters));
-static void print_time(int count_time, long time, long error);
+static void print_time(Time time);
 
 void run_mandelbrote(void (*get_pixels)(u_int32_t *counters)) {
     Window *window = window_init();
@@ -24,12 +24,12 @@ void run_mandelbrote(void (*get_pixels)(u_int32_t *counters)) {
     draw_picture(window, screen);
 
     Time time = {};
-    for (int i = 0; i < TIMES_SIZE; ++i) {
-        time = get_time(COUNT_TIMES[i], counters, get_pixels);
-        calc_colors(screen, counters);
-        draw_picture(window, screen);
-        print_time(COUNT_TIMES[i], time.time, time.error);
-    }
+
+    time = get_time(COUNT_TIMES, counters, get_pixels);
+
+    calc_colors(screen, counters);
+    draw_picture(window, screen);
+    print_time(time);
 
     end_window(window);
 
@@ -49,7 +49,7 @@ static Time get_time(int count_times, u_int32_t *counters, void (*get_pixels)(u_
         }
         clock_t end = clock();
 
-        long time = end - begin;
+        float time = end - begin;
         time = (time * 1000) / (CLOCKS_PER_SEC); // time in msec 
 
         times[i] = time;
@@ -61,7 +61,7 @@ static Time get_time(int count_times, u_int32_t *counters, void (*get_pixels)(u_
     }
     time.time /= REPEAT_BENCH;
     for (int i = 0; i < REPEAT_BENCH; ++i) {
-        long delta = (times[i] - time.time);
+        float delta = (times[i] - time.time);
         time.error += delta * delta;
     }
     time.error /= REPEAT_BENCH;
@@ -70,8 +70,8 @@ static Time get_time(int count_times, u_int32_t *counters, void (*get_pixels)(u_
     return time;
 }
 
-static void print_time(int count_time, long time, long error) {
-    printf("%d, %ld, %ld\n", count_time, time, error);
+static void print_time(Time time) {
+    printf("%f, %f\n", time.time, time.error);
 }
 
 static void calc_colors(u_int8_t *screen, u_int32_t *counters) {

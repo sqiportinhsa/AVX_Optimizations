@@ -6,10 +6,9 @@
 
 const int ITERATIONS  = 1000;
 
-const int COUNT_TIMES[] = {10, 25, 50, 75, 100};
-const int TIMES_SIZE    = sizeof(COUNT_TIMES) / sizeof(int);
+const int COUNT_TIMES = 50;
 
-const int REPEAT_BENCH = 5;
+const int REPEAT_BENCH = 10;
 
 const int SCREEN_WIDTH  = 1024;
 const int SCREEN_HEIGHT = 1024;
