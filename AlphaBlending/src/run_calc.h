@@ -11,14 +11,13 @@ struct Window {
 };
 
 struct Time {
-    long   time  = 0;
+    double time  = 0;
     double error = 0;
 };
 
 const int REPEAT_BENCH = 100;
 
-const int COUNT_TIMES[] = {100, 250, 500, 750, 1000};
-const int TIMES_SIZE    = sizeof(COUNT_TIMES) / sizeof(int);
+const int COUNT_TIMES = 100000;
 
 const int XSHIFT = 400;
 const int YSHIFT = 0;

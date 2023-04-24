@@ -10,9 +10,11 @@ static void draw_picture(Window *window, uint32_t *image, int height, int width)
 
 static Time get_time(int count_times, Image *front, Image *back, uint32_t *dest,
                    void (*get_pixels)(Image *front, Image *back, uint32_t *dest, 
-                                    const int xshift, const int yshift));
+                                           const int xshift, const int yshift));
 
-static void print_time(int count_time, long time, double error);
+static void print_time(Time time);
+uint32_t *reverse(uint32_t *image, unsigned int height, unsigned int width);
+
 
 void run_blending(void (*get_pixels)(Image *front, Image *background, uint32_t *dest, 
                                                  const int xshift, const int yshift), 
@@ -21,12 +23,15 @@ void run_blending(void (*get_pixels)(Image *front, Image *background, uint32_t *
     Window *window = window_init(back->height, back->width);
     uint32_t *dest = (uint32_t*) aligned_alloc(256, back->size * sizeof(uint32_t));
 
+
+    get_time(1, front, back, dest, get_pixels);
+    draw_picture(window, dest, back->height, back->width);
+
     Time time = {};
-    for (int i = 0; i < TIMES_SIZE; ++i) {
-        time = get_time(COUNT_TIMES[i], front, back, dest, get_pixels);
-        draw_picture(window, dest, back->height, back->width);
-        print_time(COUNT_TIMES[i], time.time, time.error);
-    }
+    
+    time = get_time(COUNT_TIMES, front, back, dest, get_pixels);
+    draw_picture(window, dest, back->height, back->width);
+    print_time(time);
     sleep(5);
 
     uint32_t *temp = back->pixels;
@@ -54,7 +59,7 @@ static Time get_time(int count_times, Image *front, Image *back, uint32_t *dest,
         }
         clock_t end = clock();
 
-        long time = end - begin;
+        double time = end - begin;
         time = (time * 1000000) / (CLOCKS_PER_SEC); // time in usec 
 
         times[i] = time;
@@ -66,7 +71,7 @@ static Time get_time(int count_times, Image *front, Image *back, uint32_t *dest,
     }
     time.time /= REPEAT_BENCH;
     for (int i = 0; i < REPEAT_BENCH; ++i) {
-        long delta = (times[i] - time.time);
+        double delta = (times[i] - time.time);
         time.error += delta * delta;
     }
     time.error /= REPEAT_BENCH;
@@ -75,23 +80,35 @@ static Time get_time(int count_times, Image *front, Image *back, uint32_t *dest,
     return time;
 }
 
-static void print_time(int count_time, long time, double error) {
-    printf("%d, %ld, %lg\n", count_time, time, error);
+static void print_time(Time time) {
+    printf("%f, %f\n", time.time, time.error);
 }
 
 static void draw_picture(Window *window, uint32_t *image, int height, int width) {
     int   pitch  = 0;
     void *pixels = nullptr;
 
+    uint32_t *reversed = reverse(image, height, width);
+
     SDL_LockTexture(window->tex, NULL, &pixels, &pitch);
-    memcpy(pixels, image, height * width * sizeof(uint32_t));
+    memcpy(pixels, reversed, height * width * sizeof(uint32_t));
     SDL_UnlockTexture(window->tex);
 
     SDL_RenderClear(window->ren);
     SDL_RenderCopy(window->ren, window->tex, NULL, NULL);
     SDL_RenderPresent(window->ren);
+    free(reversed);
 }
 
+uint32_t *reverse(uint32_t *image, unsigned int height, unsigned int width) {
+    uint32_t *reversed = (uint32_t*) calloc(height * width, sizeof(uint32_t));
+    for (unsigned int i = 0; i < height; ++i) {
+        for (unsigned int j = 0; j < width; ++j) {
+            reversed[i*width + j] = image[(height - i)*width + j];
+        }
+    }
+    return reversed;
+}
 
 static Window *window_init(int height, int width) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {

@@ -71,7 +71,7 @@ void vector_blending(Image *front, Image *background, uint32_t *dest, const int 
 }
 
 
-static inline __m256i _mm256_mulhi_epi8_own(__m256i a, __m256i b) {
+static __always_inline __m256i _mm256_mulhi_epi8_own(__m256i a, __m256i b) {
     __m256i low_a  = _mm256_shuffle_epi8(a, SPLIT_LOW_MASK);
     __m256i low_b  = _mm256_shuffle_epi8(b, SPLIT_LOW_MASK);
     __m256i high_a = _mm256_shuffle_epi8(a, SPLIT_HIGH_MASK);
